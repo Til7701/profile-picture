@@ -1,17 +1,15 @@
 package de.holube;
 
-import de.holube.io.ImageSaver;
-
-import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         ProfilePictureFactory ppf = new ProfilePictureFactory();
-        BufferedImage image = ppf.create(512, 512);
-        ImageSaver.save(image, "test512.png");
-        image = ppf.create(1000, 1000);
-        ImageSaver.save(image, "test1000.png");
+        File file = new File("profile-picture.svg");
+        Files.write(file.toPath(), ppf.create().getBytes());
     }
 
 }
