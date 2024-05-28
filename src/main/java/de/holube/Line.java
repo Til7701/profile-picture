@@ -3,7 +3,7 @@ package de.holube;
 import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 
-public class Line extends Line2D.Double {
+public class Line extends Line2D.Double implements Covering {
 
     public Line(double x1, double y1, double x2, double y2) {
         super(x1, y1, x2, y2);
@@ -45,6 +45,11 @@ public class Line extends Line2D.Double {
                        (Math.abs(this.x1 - other.x1) < EPSILON) &&
                        (Math.abs(this.y2 - other.y1) < EPSILON)
                );
+    }
+
+    @Override
+    public boolean isCovering(int x, int y) {
+        return intersects(x, y, 1, 1);
     }
 
 }

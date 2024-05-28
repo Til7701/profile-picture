@@ -1,6 +1,9 @@
 package de.holube;
 
-public class TH {
+import java.util.ArrayList;
+import java.util.List;
+
+public class TH implements Covering {
 
     private static final Rectangle[] BACKGROUNDS = {
             new Rectangle(0, 0, 4, 1),
@@ -42,19 +45,57 @@ public class TH {
 
     public String toSVG() {
         StringBuilder sb = new StringBuilder();
-        for (Rectangle background : BACKGROUNDS) {
-            sb.append(background.scale(scalingFactor).move(x, y).toSVG(CSS.TH_BACKGROUND))
+        for (Rectangle background : getBackgrounds()) {
+            sb.append(background.toSVG(CSS.TH_BACKGROUND))
                     .append("\n");
         }
-        for (Line line : LINES_T) {
-            sb.append(line.scale(scalingFactor).move(x, y).toSVG(CSS.TH_T))
+        for (Line line : getLinesT()) {
+            sb.append(line.toSVG(CSS.TH_T))
                     .append("\n");
         }
-        for (Line line : LINES_H) {
-            sb.append(line.scale(scalingFactor).move(x, y).toSVG(CSS.TH_H))
+        for (Line line : getLinesH()) {
+            sb.append(line.toSVG(CSS.TH_H))
                     .append("\n");
         }
         return sb.toString();
+    }
+
+    private List<Rectangle> getBackgrounds() {
+        List<Rectangle> backgrounds = new ArrayList<>();
+        for (Rectangle background : BACKGROUNDS) {
+            backgrounds.add(background.scale(scalingFactor).move(x, y));
+        }
+        return backgrounds;
+    }
+
+    private List<Line> getLinesT() {
+        List<Line> lines = new ArrayList<>();
+        for (Line line : LINES_T) {
+            lines.add(line.scale(scalingFactor).move(x, y));
+        }
+        return lines;
+    }
+
+    private List<Line> getLinesH() {
+        List<Line> lines = new ArrayList<>();
+        for (Line line : LINES_H) {
+            lines.add(line.scale(scalingFactor).move(x, y));
+        }
+        return lines;
+    }
+
+    @Override
+    public boolean isCovering(int x, int y) {
+        List<Covering> coverings = new ArrayList<>();
+        coverings.addAll(getBackgrounds());
+        coverings.addAll(getLinesT());
+        coverings.addAll(getLinesH());
+        for (Covering covering : coverings) {
+            if (covering.isCovering(x, y)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

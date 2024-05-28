@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Random;
 
-public class Maze {
+public class Maze implements Covering {
 
     private final int lineLength;
     private final String cssClass;
@@ -15,14 +15,16 @@ public class Maze {
 
     private final List<Line> lines = new ArrayList<>();
     private final Random random;
+    private final List<Covering> coverings;
 
-    public Maze(long seed, int lineLength, String cssClass, int width, int height, double probability) {
+    public Maze(long seed, int lineLength, String cssClass, int width, int height, double probability, List<Covering> coverings) {
         this.lineLength = lineLength;
         this.cssClass = cssClass;
         this.width = width;
         this.height = height;
         this.probability = probability;
         this.random = new Random(seed);
+        this.coverings = coverings;
         createLines();
         optimizeLines();
     }
@@ -39,9 +41,13 @@ public class Maze {
         if (random.nextDouble() < probability) { // chance to draw a line
             if (random.nextBoolean()) { // horizontal or vertical
                 if (y == 0) return; // don't draw lines at the border
+                if (coverings.stream().anyMatch(c -> c.isCovering(x, y) && c.isCovering(x + lineLength, y)))
+                    return; // line is covered by something
                 lines.add(new Line(x, y, (double) x + lineLength, y));
             } else {
                 if (x == 0) return; // don't draw lines at the border
+                if (coverings.stream().anyMatch(c -> c.isCovering(x, y) && c.isCovering(x, y + lineLength)))
+                    return; // line is covered by something
                 lines.add(new Line(x, y, x, (double) y + lineLength));
             }
         }
@@ -92,6 +98,11 @@ public class Maze {
                     .append("\n");
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean isCovering(int x, int y) {
+        return false;
     }
 
 }

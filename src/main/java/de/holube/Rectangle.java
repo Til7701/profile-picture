@@ -2,7 +2,7 @@ package de.holube;
 
 import java.awt.geom.Rectangle2D;
 
-public class Rectangle extends Rectangle2D.Double {
+public class Rectangle extends Rectangle2D.Double implements Covering {
 
     public Rectangle(double x, double y, double width, double height) {
         super(x, y, width, height);
@@ -18,6 +18,11 @@ public class Rectangle extends Rectangle2D.Double {
 
     public Rectangle move(int x, int y) {
         return new Rectangle(this.x + x, this.y + y, width, height);
+    }
+
+    @Override
+    public boolean isCovering(int x, int y) {
+        return x >= this.x && x <= this.x + width && y >= this.y && y <= this.y + height;
     }
 
 }
